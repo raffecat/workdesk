@@ -15,11 +15,25 @@
         document.body.appendChild(panel);
     }
 
+    function getMousePos(e, pos) {
+        // clientXY is only for IE (documentElement in 6+ standards mode)
+        pos.x = e.pageX || (e.clientX + document.documentElement.scrollLeft);
+        pos.y = e.pageY || (e.clientY + document.documentElement.scrollTop);
+    }
+    function getElemPos(elem, pos) {
+        // get element position in document coords.
+        var x=0, y=0; do {
+          x += elem.offsetLeft; y += elem.offsetTop;
+        } while (elem=elem.offsetParent);
+        pos.x = x; pos.y = y;
+    }
+
     function startDrag(e, elem) {
         e = e || event;
-        var x = e.pageX || e.clientX, y = e.pageY || e.clientY;
-        var orgX = x - (elem.style.left||'').replace('px','');
-        var orgY = y - (elem.style.top||'').replace('px','');
+        var mpos = {}; getMousePos(e, mpos);
+        var epos = {}; getElemPos(elem, epos);
+        var orgX = mpos.x - epos.x;
+        var orgY = mpos.y - epos.y;
         document.body.onmouseup = function() {
             // FIXME: use capture so we can't miss mouseup.
             document.body.onmouseup = null;
@@ -27,9 +41,9 @@
         };
         document.body.onmousemove = function(e) {
             e = e || event;
-            var x = e.pageX || e.clientX, y = e.pageY || e.clientY;
-            elem.style.left = (x - orgX)+'px';
-            elem.style.top = (y - orgY)+'px';
+            getMousePos(e, mpos);
+            elem.style.left = (mpos.x - orgX)+'px';
+            elem.style.top = (mpos.y - orgY)+'px';
         };
     }
 
