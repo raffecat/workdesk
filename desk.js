@@ -45,6 +45,13 @@
             elem.style.left = (mpos.x - orgX)+'px';
             elem.style.top = (mpos.y - orgY)+'px';
         };
+        // bring the panel to the front.
+        var maxZ = 0;
+        for (var n=document.body.firstChild; n; n=n.nextSibling) {
+            var s = n.style, z = s && +s.zIndex;
+            if (z > maxZ) maxZ = z;
+        }
+        elem.style.zIndex = maxZ + 1;
     }
 
     document.body.onmousedown = function(e) {
@@ -58,27 +65,37 @@
             startDrag(e, elem);
     };
 
-    function newPanel(html, cls) {
+    function newPanel(html, cls, title) {
         var panel = newElem("div", {"class":"panel "+(cls||'')});
         panel.id = uniqueId();
-        panel.innerHTML = '<div class="panel-back"></div><div class="panel-edge"></div><div class="panel-content">'+html+'</div>';
+        title = title ? '<div class="title"><input value="'+title+'" type="text" class="title-inp" spellcheck="false"></div>' : '';
+        panel.innerHTML = title+'<div class="panel-content">'+html+'</div>';
         return panel;
     }
 
     var newBtn = newPanel('+', 'newBtn');
     addToDesk(newBtn);
     newBtn.onclick = function(e) {
-        newEditor();
-        //if (e) e.stopPropagation();
-        //else event.cancelBubble = true;
+        newEditor('untitled');
     };
 
-    var nextPos = 10;
-    function newEditor() {
+    function newMapping(title, body) {
         var id = uniqueId();
-        var panel = newPanel('<div id="'+id+'" style="width:100%;height:100%"></div>', 'aceBox');
-        panel.style.left = nextPos+'px';
-        panel.style.top = nextPos+'px';
+        var panel = newPanel('<div id="'+id+'" style="width:100%;height:100%">'+body+'</div>', 'window mapping', title);
+        panel.style.left = '10px';
+        panel.style.top = '10px';
+        panel.style.width = '300px';
+        panel.style.height = '400px';
+        addToDesk(panel);
+        panel.canDrag = true;
+    }
+
+    var nextPos = 10;
+    function newEditor(title, text) {
+        var id = uniqueId();
+        var panel = newPanel('<div id="'+id+'" style="width:100%;height:100%">'+text+'</div>', 'window aceBox', title);
+        panel.style.left = (400+nextPos)+'px';
+        panel.style.top = (40+nextPos)+'px';
         nextPos += 50;
         addToDesk(panel); // ace init requires in-document.
         panel.canDrag = true;
@@ -92,6 +109,22 @@
         return panel;
     }
 
-    newEditor();
+    newMapping("localhost:8000",
+        "<div class='row'>/api/communities</div>"+
+        "<div class='row'>/api/communities/:page</div>"+
+        "<div class='row'>/api/communities/:page/membership</div>"+
+        "<div class='row'>/api/communities/:page/members</div>"+
+        "<div class='row'>/api/communities/:page/forum/:topic</div>"+
+        "<div class='row'>/api/communities/:page/wiki/:topic</div>"+
+        "<div class='row'>/api/communities/:page/wiki/:topic/edit</div>"+
+        "<div class='row'>/api/communities/:page/edit</div>"+
+        "<div class='row'>/api/communities/:page/new</div>"+
+        "<div class='row'>/api/communities/new</div>"+
+        "<div class='row'>/api/forum/:forum/posts</div>"+
+        "<div class='row'>/api/forum/:forum/newpost</div>"+
+        "<div class='row'>/api/forum/:forum/:post/edit</div>"+
+        "<div class='row'>/api/forum/:forum/:post/delete</div>"
+    );
+    newEditor("/api/forum/:forum/posts", "function(){}");
 
 })();

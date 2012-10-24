@@ -1,20 +1,8 @@
 .panel {
   position: absolute;
-}
-.panel-back {
-  position: absolute;
-  top:0; left:0; bottom:0; right:0;
   border-radius: 4px;
-  background-color: #fff;
-  border: 1px solid transparent;
-  opacity: 0.2;
-}
-.panel-edge {
-  position: absolute;
-  top:0; left:0; bottom:0; right:0;
-  border-radius: 4px;
+  background: #666;
   border: 1px solid #777;
-  opacity: 0.5;
 }
 .panel-content {
   position: absolute;
@@ -27,7 +15,32 @@ img { border: 1px solid red; }
 font-weight:bold; font-size:28px; color:#fff; line-height:14px;
 width:27px; height:27px; cursor:pointer; }
 
+.window { background: #666 url(dot.png) 3px 3px no-repeat; }
+.window .panel-content { top: 24px; }
+.window .title { position:absolute; top:3px; left:22px; right:18px; }
+.window .title-inp { width:100%; font-size:14px; line-height:16px; color:#fff; border:0; margin:0; padding:0; background:transparent; }
+
 .aceBox { width:512px; height:384px; }
+
+.mapping .panel-content { background:#444; color:#fff; overflow-y:scroll; }
+.mapping .row { background:#555; color:#fff; padding: 1px 2px; border: 1px solid #777; margin:1px; border-radius:2px; }
+
+
+.panel-content::-webkit-scrollbar { width: 8px; }
+.panel-content::-webkit-scrollbar-button:start:decrement,
+.panel-content::-webkit-scrollbar-button:end:increment { display: none; }
+.panel-content::-webkit-scrollbar-track-piece { background-color: transparent; }
+.panel-content::-webkit-scrollbar-thumb:vertical {
+    height: 50px;
+    background-color: #777;
+    border: 1px solid #555;
+    -webkit-border-radius: 3px;
+}
+.panel-content::-webkit-scrollbar-thumb:vertical:hover {
+    background-color: #777;
+    border: 1px solid #555;
+}
+
 
 .ace_sb::-webkit-scrollbar { width: 8px; }
 .ace_sb::-webkit-scrollbar-button:start:decrement,
