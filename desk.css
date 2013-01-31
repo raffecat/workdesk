@@ -12,7 +12,10 @@
 
 img { border: 1px solid red; }
 
-.newBtn { position:absolute; right:8px; top:8px;
+.connectBtn { position:absolute; right:8px; top: 8px;
+width:27px; height:27px; cursor:pointer; }
+
+.newBtn { position:absolute; right:8px; top:40px;
 width:27px; height:27px; cursor:pointer; }
 
 .enabled:before {

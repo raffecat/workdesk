@@ -73,6 +73,12 @@
         return panel;
     }
 
+    var connectBtn = newPanel('<span class="icon-power-cord"></span>', 'connectBtn');
+    addToDesk(connectBtn);
+    connectBtn.onclick = function(e) {
+        newMapping('not connected', 'not sure what I should be doing o.O');
+    };
+
     var newBtn = newPanel('<span class="icon-plus"></span>', 'newBtn');
     addToDesk(newBtn);
     newBtn.onclick = function(e) {
