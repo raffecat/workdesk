@@ -68,12 +68,12 @@
     function newPanel(html, cls, title) {
         var panel = newElem("div", {"class":"panel "+(cls||'')});
         panel.id = uniqueId();
-        title = title ? '<div class="title"><input value="'+title+'" type="text" class="title-inp" spellcheck="false"></div>' : '';
+        title = title ? '<div class="title"><span class="icon-power-cord enabled"></span><input value="'+title+'" type="text" class="title-inp" spellcheck="false"><span class="icon-cancel right"></span></div>' : '';
         panel.innerHTML = title+'<div class="panel-content">'+html+'</div>';
         return panel;
     }
 
-    var newBtn = newPanel('+', 'newBtn');
+    var newBtn = newPanel('<span class="icon-plus"></span>', 'newBtn');
     addToDesk(newBtn);
     newBtn.onclick = function(e) {
         newEditor('untitled');

@@ -13,13 +13,18 @@
 img { border: 1px solid red; }
 
 .newBtn { position:absolute; right:8px; top:8px;
-font-weight:bold; font-size:28px; color:#fff; line-height:14px;
 width:27px; height:27px; cursor:pointer; }
 
-.window { background: #666 url(dot.png) 3px 3px no-repeat; }
+.enabled:before {
+    color: #9BE489;
+}
+
+.window { background: #666 }
 .window .panel-content { top: 24px; }
-.window .title { position:absolute; top:3px; left:22px; right:18px; }
-.window .title-inp { width:100%; font-size:14px; line-height:16px; color:#fff; border:0; margin:0; padding:0; background:transparent; }
+.window .title { position:absolute; top:3px; left:2px; right:18px; }
+.window .title span.icon-power-cord { margin-right: 2px; }
+.window .title span.right { float: right; }
+.window .title-inp { width:90%; font-size:14px; line-height:16px; color:#fff; border:0; margin:0; padding:0; background:transparent; }
 
 .aceBox { width:512px; height:384px; }
 

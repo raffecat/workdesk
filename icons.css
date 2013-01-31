@@ -1,0 +1,96 @@
+@font-face {
+	font-family: 'icomoon';
+	src:url('fonts/icomoon.eot');
+	src:url('fonts/icomoon.eot?#iefix') format('embedded-opentype'),
+		url('fonts/icomoon.woff') format('woff'),
+		url('fonts/icomoon.ttf') format('truetype'),
+		url('fonts/icomoon.svg#icomoon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+/* Use the following CSS code if you want to use data attributes for inserting your icons */
+[data-icon]:before {
+	font-family: 'icomoon';
+	content: attr(data-icon);
+	speak: none;
+	font-weight: normal;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+}
+
+/* Use the following CSS code if you want to have a class per icon */
+/*
+Instead of a list of all class selectors,
+you can use the generic selector below, but it's slower:
+[class*="icon-"]:before {
+*/
+.icon-quill:before, .icon-film:before, .icon-image:before, .icon-music:before, .icon-file-css:before, .icon-file-xml:before, .icon-pushpin:before, .icon-folder-open:before, .icon-folder:before, .icon-plus:before, .icon-remove:before, .icon-cog:before, .icon-expand:before, .icon-contract:before, .icon-cancel:before, .icon-checkmark:before, .icon-play:before, .icon-pause:before, .icon-console:before, .icon-power-cord:before {
+	font-family: 'icomoon';
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	line-height: 1;
+	-webkit-font-smoothing: antialiased;
+    color: #444;
+}
+.icon-quill:before {
+	content: "\21";
+}
+.icon-film:before {
+	content: "\22";
+}
+.icon-image:before {
+	content: "\23";
+}
+.icon-music:before {
+	content: "\24";
+}
+.icon-file-css:before {
+	content: "\25";
+}
+.icon-file-xml:before {
+	content: "\26";
+}
+.icon-pushpin:before {
+	content: "\27";
+}
+.icon-folder-open:before {
+	content: "\28";
+}
+.icon-folder:before {
+	content: "\29";
+}
+.icon-plus:before {
+	content: "\2a";
+}
+.icon-remove:before {
+	content: "\2b";
+}
+.icon-cog:before {
+	content: "\2c";
+}
+.icon-expand:before {
+	content: "\2d";
+}
+.icon-contract:before {
+	content: "\2e";
+}
+.icon-cancel:before {
+	content: "\2f";
+}
+.icon-checkmark:before {
+	content: "\30";
+}
+.icon-play:before {
+	content: "\31";
+}
+.icon-pause:before {
+	content: "\32";
+}
+.icon-console:before {
+	content: "\33";
+}
+.icon-power-cord:before {
+	content: "\34";
+}
