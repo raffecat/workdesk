@@ -109,6 +109,26 @@
         return panel;
     }
 
+
+    function setGridSize(size) {
+        var c = document.createElement("canvas");
+        c.height = c.width = size;
+        var ctx = c.getContext('2d');
+        ctx.strokeStyle = '#555';
+        ctx.beginPath();
+        ctx.moveTo(0,0);
+        ctx.lineTo(0,size);
+        ctx.closePath();
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(0,0);
+        ctx.lineTo(size,0);
+        ctx.closePath();
+        ctx.stroke();
+        document.body.style['background-image'] = "url(" + c.toDataURL("image/png")+ ")";
+    }
+
+    setGridSize(25);
     newMapping("localhost:8000",
         "<div class='row'>/api/communities</div>"+
         "<div class='row'>/api/communities/:page</div>"+
