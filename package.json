@@ -1,0 +1,11 @@
+{
+  "name" : "workdesk",
+  "description" : "The infinite desktop experiment",
+  "version" : "0.0.1",
+  "private" : true,
+  "dependencies": {
+    "express": "3.0.6",
+    "socket.io" : "0.9.13"
+  },
+  "main": "server"
+}
