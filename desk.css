@@ -1,8 +1,14 @@
 .panel {
   position: absolute;
   border-radius: 4px;
-  background: #666;
   border: 1px solid #777;
+}
+
+.panel-bg {
+  position: absolute;
+  top:0; left:0; bottom:0; right:0;
+  background: #666;
+  opacity: 0.8;
 }
 
 .panel-content {
@@ -13,21 +19,23 @@
 img { border: 1px solid red; }
 
 .connectBtn { position:absolute; right:8px; top: 8px;
-width:27px; height:27px; cursor:pointer; }
+width:27px; height:27px; cursor:pointer; color:#9dbf28; text-shadow: #000 1px 1px 0; }
 
 .newBtn { position:absolute; right:8px; top:40px;
-width:27px; height:27px; cursor:pointer; }
+width:27px; height:27px; cursor:pointer; color:#bf6c22; text-shadow: #000 1px 1px 0; }
 
 .enabled:before {
-    color: #9BE489;
+    font-size: 14px;
+    color: #9dbf28;
+    text-shadow: #000 1px 1px 0;
 }
 
-.window { background: #666 }
 .window .panel-content { top: 24px; }
-.window .title { position:absolute; top:2px; left:22px; right:22px; }
+.window .title { position:absolute; top:2px; left:25px; right:22px; }
 .window .title-inp { width:100%; font-size:14px; line-height:16px; color:#fff; border:0; margin:0; padding:0; background:transparent; outline:0px solid; }
-.window .title-icon { position:absolute; top:3px; left:3px; }
-.window .title-close { position:absolute; top:4px; right:4px; font-size:12px; }
+.window .title-icon { position:absolute; top:3px; left:4px; }
+.window .title-close { position:absolute; top:5px; right:5px; font-size:12px; }
+.window .title-close:before { color:#333; text-shadow: #888 1px 1px 0; }
 
 .aceBox { width:512px; height:384px; }
 

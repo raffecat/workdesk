@@ -13,6 +13,7 @@
     function addToDesk(panel) {
         // FIXME: IE7 does not allow this.
         document.body.appendChild(panel);
+        bringToFront(panel);
     }
 
     function getMousePos(e, pos) {
@@ -26,6 +27,16 @@
           x += elem.offsetLeft; y += elem.offsetTop;
         } while (elem=elem.offsetParent);
         pos.x = x; pos.y = y;
+    }
+
+    function bringToFront(elem) {
+        // bring the panel to the front.
+        var maxZ = 0;
+        for (var n=document.body.firstChild; n; n=n.nextSibling) {
+            var s = n.style, z = s && +s.zIndex;
+            if (z > maxZ) maxZ = z;
+        }
+        elem.style.zIndex = maxZ + 1;
     }
 
     function startDrag(e, elem) {
@@ -45,13 +56,7 @@
             elem.style.left = (mpos.x - orgX)+'px';
             elem.style.top = (mpos.y - orgY)+'px';
         };
-        // bring the panel to the front.
-        var maxZ = 0;
-        for (var n=document.body.firstChild; n; n=n.nextSibling) {
-            var s = n.style, z = s && +s.zIndex;
-            if (z > maxZ) maxZ = z;
-        }
-        elem.style.zIndex = maxZ + 1;
+        bringToFront(elem);
     }
 
     document.body.onmousedown = function(e) {
@@ -65,11 +70,24 @@
             startDrag(e, elem);
     };
 
+    document.body.onclick = function(e) {
+        e = e || event;
+        var elem = e.target || e.srcElement;
+        if (elem.getAttribute('data-is-panel-close')) {
+            // find a parent with an id (a panel or something else)
+            var body = document.body;
+            while (elem && elem !== body && !elem.id) elem = elem.parentNode;
+            if (elem && elem.parentNode === body) {
+                body.removeChild(elem);
+            }
+        }
+    };
+
     function newPanel(html, cls, title) {
         var panel = newElem("div", {"class":"panel "+(cls||'')});
         panel.id = uniqueId();
-        title = title ? '<div class="title-icon icon-power-cord enabled"></div><div class="title"><input value="'+title+'" type="text" class="title-inp" spellcheck="false"></div><div class="title-close icon-cancel"></div>' : '';
-        panel.innerHTML = title+'<div class="panel-content">'+html+'</div>';
+        title = title ? '<div class="title-icon icon-power-cord enabled"></div><div class="title"><input value="'+title+'" type="text" class="title-inp" spellcheck="false"></div><div class="title-close icon-cancel" data-is-panel-close="t"></div>' : '';
+        panel.innerHTML = '<div class="panel-bg"></div>'+title+'<div class="panel-content">'+html+'</div>';
         return panel;
     }
 
