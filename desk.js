@@ -68,7 +68,7 @@
     function newPanel(html, cls, title) {
         var panel = newElem("div", {"class":"panel "+(cls||'')});
         panel.id = uniqueId();
-        title = title ? '<div class="title"><span class="icon-power-cord enabled"></span><input value="'+title+'" type="text" class="title-inp" spellcheck="false"><span class="icon-cancel right"></span></div>' : '';
+        title = title ? '<div class="title-icon icon-power-cord enabled"></div><div class="title"><input value="'+title+'" type="text" class="title-inp" spellcheck="false"></div><div class="title-close icon-cancel"></div>' : '';
         panel.innerHTML = title+'<div class="panel-content">'+html+'</div>';
         return panel;
     }
