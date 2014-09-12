@@ -1,13 +1,13 @@
 .panel {
   position: absolute;
   border-radius: 4px;
-  border: 1px solid #777;
+  border: 1px solid #9ab;
 }
 
 .panel-bg {
   position: absolute;
   top:0; left:0; bottom:0; right:0;
-  background: #666;
+  background: #a0a1c0;
   opacity: 0.8;
 }
 
@@ -35,7 +35,7 @@ width:27px; height:27px; cursor:pointer; color:#bf6c22; text-shadow: #000 1px 1p
 .window .title-inp { width:100%; font-size:14px; line-height:16px; color:#fff; border:0; margin:0; padding:0; background:transparent; outline:0px solid; }
 .window .title-icon { position:absolute; top:3px; left:4px; }
 .window .title-close { position:absolute; top:5px; right:5px; font-size:12px; }
-.window .title-close:before { color:#333; text-shadow: #888 1px 1px 0; }
+.window .title-close:before { color:#ffd; text-shadow: #888 1px 1px 0; }
 
 .aceBox { width:512px; height:384px; }
 
