@@ -49,7 +49,6 @@ MiniDOM = (function(){
     // bring DOM child nodes in sync with the model.
     for (var i=0, n=children.length; i<n; i++) {
       var model = children[i];
-      model.parent = enclosing; // for events.
       // var id = model.id || (model.id = (id = 'md-'+(nextId++)));
       if (typeof model === 'string') {
         // text node.
@@ -80,6 +79,7 @@ MiniDOM = (function(){
         } else {
           parent.insertBefore(elem, nextChild);
         }
+        model.parent = enclosing; // for events.
       }
     }
     return nextChild;

@@ -4,9 +4,10 @@ Workdesk = (function(){
     var desk = {};
     desk.reg = register;
     desk.panel = newPanel;
-    desk.add = addPanel;
     desk.uid = uniqueId;
     desk.later = later;
+    desk.spawn = spawn;
+    desk.types = function(){ return Object.keys(types) };
 
     function remove(seq,item){
       for (var i=0,n=seq.length;i<n;i++) {
@@ -25,11 +26,9 @@ Workdesk = (function(){
     var root = { tag:'body', children:frames };
     var state = {};
 
-    desk.root = root;
-
     function sync() {
       dom_sync(document.body, root, state);
-      run();      
+      run();
     }
 
     var types = {};
@@ -39,22 +38,6 @@ Workdesk = (function(){
 
     var nextId = 1;
     function uniqueId() { return 'id'+(nextId++); }
-
-    var nextPos = 10;
-    function addPanel(panel, x, y, w, h) {
-        if (x==null || y==null) {
-          x = nextPos; y = nextPos;
-          nextPos += 50; if (nextPos > 1000) nextPos = 10;
-        }
-        if (w == null || w < 400) w = 400;
-        if (h == null || h < 300) h = 300;
-        if (!panel.style) panel.style = {};
-        panel.style.left = x+'px';
-        panel.style.top = y+'px';
-        panel.style.width = w+'px';
-        panel.style.height = h+'px';
-        frames.push(panel);
-    }
 
     function getMousePos(e, pos) {
         // clientXY is only for IE (documentElement in 6+ standards mode)
@@ -137,15 +120,29 @@ Workdesk = (function(){
       remove(frames, panel.parent);
     }
 
-    function newPanel(content, cls, title) {
-      var classes = cls.split(ws); classes.unshift('panel');
-      return { tag:'div', classes:classes, canDrag:true, children:[
+    var nextPos = 10;
+
+    function newPanel(content, cls, title, x, y, w, h) {
+      var classes = cls.split(ws); classes.push('panel','window');
+      if (x==null || y==null) {
+        x = nextPos; y = nextPos;
+        nextPos += 50; if (nextPos > 1000) nextPos = 10;
+      }
+      if (w == null || w < 50) w = 50;
+      if (h == null || h < 50) h = 50;
+      var panel = { tag:'div', classes:classes, canDrag:true, children:[
         { tag:'div', classes:['panel-bg'] },
         { tag:'div', classes:['title-icon','icon-power-cord','enabled'] },
         { tag:'div', classes:['title'], children:[title] },
         { tag:'div', classes:['title-close icon-cancel'], onclick:closePanel, noDrag:true },
         { tag:'div', classes:['panel-content'], children:[content], noDrag:true }
       ]};
+      if (!panel.style) panel.style = {};
+      panel.style.left = x+'px';
+      panel.style.top = y+'px';
+      panel.style.width = w+'px';
+      panel.style.height = h+'px';
+      return panel;
     }
 
     function newPane(content, cls) {
@@ -159,17 +156,13 @@ Workdesk = (function(){
     var connectBtn = newPane({ tag:'span', classes:["icon-power-cord"] }, 'connectBtn');
     frames.push(connectBtn);
     connectBtn.onclick = function(e) {
-      load([
-        { is:'mapping', name:'not connected', items:['not sure what I should be doing o.O'] }
-      ]);
+      spawn('palette');
     };
 
     var newBtn = newPane({ tag:'span', classes:["icon-plus"] }, 'newBtn');
     frames.push(newBtn);
     newBtn.onclick = function(e) {
-      load([
-        { is:'editor', name:'untitled', text:'' }
-      ]);
+      spawn('palette');
     };
 
     function setGridSize(size) {
@@ -192,7 +185,7 @@ Workdesk = (function(){
 
     setGridSize(25);
     var data = [
-      { "is":"mapping", "name":"localhost:8000", "items":[
+      { "is":"mapping", "name":"localhost:8000", "x":180, "y":10, "w":300, "items":[
         "/api/communities",
         "/api/communities/:page",
         "/api/communities/:page/membership",
@@ -208,13 +201,20 @@ Workdesk = (function(){
         "/api/forum/:forum/:post/edit",
         "/api/forum/:forum/:post/delete"
       ]},
-      { "is":"editor", "name":"/api/forum/:forum/posts", "text":"function(){}" }
+      { "is":"editor", "name":"/api/forum/:forum/posts", "x":500, "y":10, "text":"function(){}" }
     ];
 
+    function spawn(type, conf) {
+      var panel = types[type](desk, conf||{});
+      frames.push(panel);
+    }
+
     function load(data) {
+      spawn('palette');
       for (var i=0, n=data.length; i<n; i++) {
         var conf = data[i];
-        types[conf.is](desk, conf);
+        var panel = types[conf.is](desk, conf);
+        frames.push(panel);
       }
       sync();
     }
