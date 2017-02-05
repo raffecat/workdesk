@@ -1,19 +1,59 @@
-(function(){
+Workdesk = (function(){
+    var dom_sync = MiniDOM.sync; // window.
+
+    var desk = {};
+    desk.reg = register;
+    desk.panel = newPanel;
+    desk.add = addPanel;
+    desk.uid = uniqueId;
+    desk.later = later;
+
+    function remove(seq,item){
+      for (var i=0,n=seq.length;i<n;i++) {
+        if (seq[i] === item) {
+          seq.splice(i,1);
+          return;
+        }
+      }
+    }
+
+    var queue = [];
+    function later(fn) { queue.push(fn) }
+    function run() { for (var q=queue, i=0; i<q.length; i++) q[i](); q.length=0; }
+
+    var frames = [];
+    var root = { tag:'body', children:frames };
+    var state = {};
+
+    desk.root = root;
+
+    function sync() {
+      dom_sync(document.body, root, state);
+      run();      
+    }
+
+    var types = {};
+    function register(name, fn) {
+      types[name] = fn;
+    }
 
     var nextId = 1;
     function uniqueId() { return 'id'+(nextId++); }
 
-    function newElem(tag, attrs) {
-        var elem = document.createElement(tag);
-        for (var k in attrs)
-            elem.setAttribute(k, attrs[k]);
-        return elem;
-    }
-
-    function addToDesk(panel) {
-        // FIXME: IE7 does not allow this.
-        document.body.appendChild(panel);
-        bringToFront(panel);
+    var nextPos = 10;
+    function addPanel(panel, x, y, w, h) {
+        if (x==null || y==null) {
+          x = nextPos; y = nextPos;
+          nextPos += 50; if (nextPos > 1000) nextPos = 10;
+        }
+        if (w == null || w < 400) w = 400;
+        if (h == null || h < 300) h = 300;
+        if (!panel.style) panel.style = {};
+        panel.style.left = x+'px';
+        panel.style.top = y+'px';
+        panel.style.width = w+'px';
+        panel.style.height = h+'px';
+        frames.push(panel);
     }
 
     function getMousePos(e, pos) {
@@ -53,6 +93,8 @@
         document.body.onmousemove = function(e) {
             e = e || event;
             getMousePos(e, mpos);
+            elem.miniDom.style.left = (mpos.x - orgX)+'px';
+            elem.miniDom.style.top = (mpos.y - orgY)+'px';
             elem.style.left = (mpos.x - orgX)+'px';
             elem.style.top = (mpos.y - orgY)+'px';
         };
@@ -64,75 +106,71 @@
         var elem = e.target || e.srcElement;
         var body = document.body;
         // find a parent with an id (a panel or something else)
-        while (elem && elem !== body && !elem.id) elem = elem.parentNode;
+        while (elem && elem !== body && !(elem.miniDom && (elem.miniDom.canDrag || elem.miniDom.noDrag))) elem = elem.parentNode;
         // only drag children of the body.
-        if (elem && elem.canDrag && elem.parentNode === body)
+        if (elem && elem.miniDom && elem.miniDom.canDrag) {
+            e.preventDefault();
             startDrag(e, elem);
+        }
     };
 
     document.body.onclick = function(e) {
         e = e || event;
         var elem = e.target || e.srcElement;
-        if (elem.getAttribute('data-is-panel-close')) {
-            // find a parent with an id (a panel or something else)
-            var body = document.body;
-            while (elem && elem !== body && !elem.id) elem = elem.parentNode;
-            if (elem && elem.parentNode === body) {
-                body.removeChild(elem);
-            }
+        var body = document.body;
+        while (elem && elem !== body) {
+          var model = elem.miniDom;
+          // stop at the first clickable node.
+          if (model && model.onclick) {
+            model.onclick(model, e);
+            sync();
+            break;
+          }
+          elem = elem.parentNode;
         }
+        sync();
     };
 
-    function newPanel(html, cls, title) {
-        var panel = newElem("div", {"class":"panel "+(cls||'')});
-        panel.id = uniqueId();
-        title = title ? '<div class="title-icon icon-power-cord enabled"></div><div class="title"><input value="'+title+'" type="text" class="title-inp" spellcheck="false"></div><div class="title-close icon-cancel" data-is-panel-close="t"></div>' : '';
-        panel.innerHTML = '<div class="panel-bg"></div>'+title+'<div class="panel-content">'+html+'</div>';
-        return panel;
+    var ws = /\s+/;
+
+    function closePanel(panel) {
+      remove(frames, panel.parent);
     }
 
-    var connectBtn = newPanel('<span class="icon-power-cord"></span>', 'connectBtn');
-    addToDesk(connectBtn);
+    function newPanel(content, cls, title) {
+      var classes = cls.split(ws); classes.unshift('panel');
+      return { tag:'div', classes:classes, canDrag:true, children:[
+        { tag:'div', classes:['panel-bg'] },
+        { tag:'div', classes:['title-icon','icon-power-cord','enabled'] },
+        { tag:'div', classes:['title'], children:[title] },
+        { tag:'div', classes:['title-close icon-cancel'], onclick:closePanel, noDrag:true },
+        { tag:'div', classes:['panel-content'], children:[content], noDrag:true }
+      ]};
+    }
+
+    function newPane(content, cls) {
+      var classes = cls.split(ws); classes.unshift('panel');
+      return { tag:'div', classes:classes, children:[
+        { tag:'div', classes:['panel-bg'] },
+        { tag:'div', classes:['panel-content'], children:[content] }
+      ]};
+    }
+
+    var connectBtn = newPane({ tag:'span', classes:["icon-power-cord"] }, 'connectBtn');
+    frames.push(connectBtn);
     connectBtn.onclick = function(e) {
-        newMapping('not connected', 'not sure what I should be doing o.O');
+      load([
+        { is:'mapping', name:'not connected', items:['not sure what I should be doing o.O'] }
+      ]);
     };
 
-    var newBtn = newPanel('<span class="icon-plus"></span>', 'newBtn');
-    addToDesk(newBtn);
+    var newBtn = newPane({ tag:'span', classes:["icon-plus"] }, 'newBtn');
+    frames.push(newBtn);
     newBtn.onclick = function(e) {
-        newEditor('untitled');
+      load([
+        { is:'editor', name:'untitled', text:'' }
+      ]);
     };
-
-    function newMapping(title, body) {
-        var id = uniqueId();
-        var panel = newPanel('<div id="'+id+'" style="width:100%;height:100%">'+body+'</div>', 'window mapping', title);
-        panel.style.left = '10px';
-        panel.style.top = '10px';
-        panel.style.width = '300px';
-        panel.style.height = '400px';
-        addToDesk(panel);
-        panel.canDrag = true;
-    }
-
-    var nextPos = 10;
-    function newEditor(title, text) {
-        var id = uniqueId();
-        var panel = newPanel('<div id="'+id+'" style="width:100%;height:100%">'+text+'</div>', 'window aceBox', title);
-        panel.style.left = (400+nextPos)+'px';
-        panel.style.top = (40+nextPos)+'px';
-        nextPos += 50;
-        addToDesk(panel); // ace init requires in-document.
-        panel.canDrag = true;
-        var editor = ace.edit(id);
-        editor.setTheme("ace/theme/monokai");
-        editor.getSession().setMode("ace/mode/javascript");
-        editor.setShowPrintMargin(false);
-        editor.setHighlightActiveLine(false);
-        editor.setShowFoldWidgets(false);
-        editor.renderer.setShowGutter(false);
-        return panel;
-    }
-
 
     function setGridSize(size) {
         var c = document.createElement("canvas");
@@ -153,22 +191,45 @@
     }
 
     setGridSize(25);
-    newMapping("localhost:8000",
-        "<div class='row'>/api/communities</div>"+
-        "<div class='row'>/api/communities/:page</div>"+
-        "<div class='row'>/api/communities/:page/membership</div>"+
-        "<div class='row'>/api/communities/:page/members</div>"+
-        "<div class='row'>/api/communities/:page/forum/:topic</div>"+
-        "<div class='row'>/api/communities/:page/wiki/:topic</div>"+
-        "<div class='row'>/api/communities/:page/wiki/:topic/edit</div>"+
-        "<div class='row'>/api/communities/:page/edit</div>"+
-        "<div class='row'>/api/communities/:page/new</div>"+
-        "<div class='row'>/api/communities/new</div>"+
-        "<div class='row'>/api/forum/:forum/posts</div>"+
-        "<div class='row'>/api/forum/:forum/newpost</div>"+
-        "<div class='row'>/api/forum/:forum/:post/edit</div>"+
-        "<div class='row'>/api/forum/:forum/:post/delete</div>"
-    );
-    newEditor("/api/forum/:forum/posts", "function(){}");
+    var data = [
+      { "is":"mapping", "name":"localhost:8000", "items":[
+        "/api/communities",
+        "/api/communities/:page",
+        "/api/communities/:page/membership",
+        "/api/communities/:page/members",
+        "/api/communities/:page/forum/:topic",
+        "/api/communities/:page/wiki/:topic",
+        "/api/communities/:page/wiki/:topic/edit",
+        "/api/communities/:page/edit",
+        "/api/communities/:page/new",
+        "/api/communities/new",
+        "/api/forum/:forum/posts",
+        "/api/forum/:forum/newpost",
+        "/api/forum/:forum/:post/edit",
+        "/api/forum/:forum/:post/delete"
+      ]},
+      { "is":"editor", "name":"/api/forum/:forum/posts", "text":"function(){}" }
+    ];
+
+    function load(data) {
+      for (var i=0, n=data.length; i<n; i++) {
+        var conf = data[i];
+        types[conf.is](desk, conf);
+      }
+      sync();
+    }
+
+    // ––~,–`~–{@   Bootstrap   @}–~,–`~––
+
+    if (document.readyState === "loading") {
+      document.onreadystatechange = function () {
+        if (document.readyState !== "loading") {
+          document.onreadystatechange = null;
+          load(data);
+        }
+      }
+    }
+
+    return desk;
 
 })();

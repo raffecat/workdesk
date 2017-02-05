@@ -1,48 +1,37 @@
-#!/usr/bin/node --harmony
-
-process.chdir(__dirname); // for init script.
+#!/usr/bin/env node
 
 var fs = require('fs');
+var express = require('express');
 var http = require('http');
-var database = require('./db');
+var low = require('lowdb');
 
 var devMode = ~process.argv.indexOf('--dev');
+var port = devMode ? 443 : 8000;
 
-var db = database("tcp://workdesk:foo123@localhost/workdesk");
+var app = express();
+app.use(express.static(__dirname));
 
-var server = http.createServer();
+var server = http.Server(app);
 var io = require('socket.io').listen(server, {
-    origins: devMode ? '*:*' : 'desk.pangur.com.au:*',
+    origins: devMode ? '*:*' : 'desk.raffe.io:*',
     'log level': devMode ? 3 : 2
 });
-var port = devMode ? 443 : 7000;
 
+var db = low('db.json');
 var users = db.get('users');
 var sessions = db.get('sessions');
 
 users.get('1').update({ username: 'pomke', password: 'foo' });
 users.get('2').update({ username: 'mario', password: 'foo' });
 
-users.find({ username: 'mario' }).attrs(function (err, attrs) {
-    console.log("mario:", err, attrs);
-});
-
-users.get('2').attrs(function (err, attrs) {
-    console.log("mario has:", err, attrs);
-});
+console.log("mario:", users.find({ username: 'mario' }).value());
 
 io.sockets.on('connection', function (socket) {
 
     socket.on('login', function (data) {
         // find matching user.
-        users.find({ username: u.username }).attrs(function (err, attrs) {
-            if (err) {
-                console.log("users.find:", err);
-                return socket.emit( 'auth', null );
-            }
-            // reply with auth status.
-            return socket.emit( 'auth', attrs && attrs.password == data.password );
-        });
+        var user = users.find({ username: data.username }).value();
+        return socket.emit( 'auth', user && user.password == data.password );
     });
 
     socket.on('load', function (data) {
@@ -50,12 +39,6 @@ io.sockets.on('connection', function (socket) {
 
 });
 
-server.listen(port);
-
-
-function first(array, predicate, notFound) {
-    for (var i=0,n=this.length||0;i<n;i++) {
-        if (predicate(this[i])) return this[i];
-    }
-    return notFound;
-}
+server.listen(port, function(){
+  console.log('listening on *:'+port);
+});
