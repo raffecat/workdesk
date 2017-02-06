@@ -13,6 +13,15 @@
   opacity: 0.8;
   cursor: move;
 }
+.panel-bg.no-move {
+  cursor: default;
+}
+
+.panel-button {
+  position: absolute;
+  top:6px; left:6px; bottom:6px; right:6px;
+  cursor: pointer;
+}
 
 .panel-content {
   position: absolute;
@@ -71,7 +80,7 @@ width:27px; height:27px; cursor:pointer; color:#bf6c22; text-shadow: #000 1px 1p
 }
 
 .window .panel-content { top: 24px; }
-.window .title { position:absolute; top:2px; left:25px; right:22px; cursor:move; }
+.window .title { position:absolute; top:2px; left:25px; right:22px; color:#fff; cursor:move; }
 .window .title-icon { position:absolute; top:3px; left:4px; cursor:move; }
 .window .title-close { position:absolute; top:5px; right:5px; font-size:12px; cursor:pointer; }
 .window .title-close:before { color:#ffd; text-shadow: #888 1px 1px 0; cursor:pointer; }
@@ -94,6 +103,13 @@ width:27px; height:27px; cursor:pointer; color:#bf6c22; text-shadow: #000 1px 1p
 .panel-content::-webkit-scrollbar-thumb:vertical:hover {
     background-color: #777;
     border: 1px solid #555;
+}
+
+
+/* Overrides */
+
+.clickable {
+  cursor: pointer !important;
 }
 
 

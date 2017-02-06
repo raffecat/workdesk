@@ -148,8 +148,8 @@ Workdesk = (function(){
     function newPane(content, cls) {
       var classes = cls.split(ws); classes.unshift('panel');
       return { tag:'div', classes:classes, children:[
-        { tag:'div', classes:['panel-bg'] },
-        { tag:'div', classes:['panel-content'], children:[content] }
+        { tag:'div', classes:['panel-bg','clickable'] },
+        { tag:'div', classes:['panel-button'], children:[content] }
       ]};
     }
 
@@ -185,7 +185,7 @@ Workdesk = (function(){
 
     setGridSize(25);
     var data = [
-      { "is":"mapping", "name":"localhost:8000", "x":180, "y":10, "w":300, "items":[
+      { "is":"request-router", "name":"localhost:8000", "x":180, "y":10, "w":300, "h":300, "items":[
         "/api/communities",
         "/api/communities/:page",
         "/api/communities/:page/membership",

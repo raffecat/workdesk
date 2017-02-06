@@ -2,7 +2,7 @@
   var desk = Workdesk; // window.
 
   function row(text, click) {
-    return {tag:'div',classes:['row'],children:[text],onclick:click};
+    return {tag:'div',classes:['row',click?'clickable':null],children:[text],onclick:click};
   }
 
   function field(label, value, onchange) {
@@ -37,7 +37,7 @@
 
   desk.reg("parse-json", function (sheet, conf) {
     var from = field('text', conf.text||'');
-    var contents = [from];
+    var contents = [from, row('data')];
     var panel = sheet.panel(contents, '', 'Parse JSON', conf.x, conf.y, conf.w||300, conf.h||87);
     return panel;
   });
@@ -45,17 +45,19 @@
   desk.reg("http-server", function (sheet, conf) {
     var port = field('port', conf.port||'80');
     var bind = field('bind', conf.address||'::');
-    var contents = [port, bind];
-    var panel = sheet.panel(contents, '', 'HTTP Server', conf.x, conf.y, conf.w||300, conf.h||87);
+    var reqs = row('requests');
+    var contents = [port, bind, reqs];
+    var panel = sheet.panel(contents, '', 'HTTP Server', conf.x, conf.y, conf.w||300, conf.h||110);
     return panel;
   });
 
-  desk.reg("mapping", function (sheet, conf) {
-    var box = { tag:'div', style:{width:'100%',height:'100%'}, children:[] };
-    var panel = sheet.panel(box, 'scrolling', 'Mapping', conf.x, conf.y, conf.w||400, conf.h||300);
+  desk.reg("request-router", function (sheet, conf) {
+    var rows = [];
+    var panel = sheet.panel(rows, 'scrolling', 'Request Router', conf.x, conf.y, conf.w||400, conf.h||300);
     function update() {
-      box.children = (conf.items||[]).map(function(item){
-        return {tag:'div',classes:['row'],children:[item]};
+      rows.length = 0;
+      (conf.items||[]).forEach(function(item){
+        rows.push({tag:'div',classes:['row'],children:[item]});
       });
     }
     update();
