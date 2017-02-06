@@ -64,7 +64,7 @@
 
   desk.reg("editor", function (sheet, conf) {
     var id = sheet.uid();
-    var box = { tag:'div', attrs:{id:id}, style:{width:'100%',height:'100%'}, children:[conf.text||''] };
+    var box = { tag:'div', attrs:{id:id}, style:{width:'100%',height:'100%'} };
     var panel = sheet.panel(box, 'is-ace-panel', conf.name||'Editor', conf.x, conf.y, conf.w||400, conf.h||300);
     sheet.later(function(){
       // ace init requires in-document.
@@ -75,6 +75,8 @@
       editor.setHighlightActiveLine(false);
       editor.setShowFoldWidgets(false);
       editor.renderer.setShowGutter(false);
+      editor.setValue(conf.text||'');
+      panel.editor = editor;
     });
     return panel;
   });
