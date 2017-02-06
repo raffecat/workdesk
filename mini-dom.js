@@ -104,6 +104,10 @@ MiniDOM = (function(){
       if (!state.attrs) state.attrs = {};
       syncAttrs(elem, model.attrs, state.attrs);
     }
+    if (model.props) {
+      if (!state.props) state.props = {};
+      syncProps(elem, model.props, state.props);
+    }
     if (model.style) {
       if (!state.style) state.style = {};
       syncProps(elem.style, model.style, state.style);

@@ -201,7 +201,9 @@ Workdesk = (function(){
         "/api/forum/:forum/:post/edit",
         "/api/forum/:forum/:post/delete"
       ]},
-      { "is":"editor", "name":"/api/forum/:forum/posts", "x":500, "y":10, "text":"function(){}" }
+      { "is":"editor", "name":"/api/forum/:forum/posts", "x":500, "y":10, "text":"function(){}" },
+      { "is":"read-file", "file":"config.json", "encoding":"utf8", "x":200, "y":340 },
+      { "is":"parse-json", "text":"{}", "x":520, "y":340 },
     ];
 
     function spawn(type, conf) {
